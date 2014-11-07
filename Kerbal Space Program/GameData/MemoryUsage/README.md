@@ -22,7 +22,7 @@ MemoryUsage is a plugin which add the possibility to see the memory used by KSP.
 
 #### How to install it?
 
-Unzip all files. Put the "Kerbal Space Program" folder in your game installation folder.
+Unzip all files. Put the files which are in "Kerbal Space Program" folder in your game installation folder.
 
 #### How to uninstall it?
 
