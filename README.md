@@ -34,7 +34,7 @@ To use this mod, you need to launch MemoryUsage.exe, if the game is not launched
 
 If you want to launch the game in 64 bits, just put -64b in arguments: MemoryUsage.exe -64b
 
-If you want to launch the game with opengl or anyother options just put it to arguments: MemoryUsage.exe -force-opengl
+If you want to launch the game with opengl or anyother options just put it in arguments: MemoryUsage.exe -force-opengl
 
 #### Why an external exe for this?
 
