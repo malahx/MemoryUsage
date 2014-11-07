@@ -31,7 +31,9 @@ Delete the MemoryUsage folder in your KSP/GameData folder and MemoryUsage.exe wh
 #### How to use it?
 
 To use this mod, you need to launch MemoryUsage.exe, if the game is not launched, MemoryUsage will launch it. After this, in game, you just need to push on F11 to start seeing the KSP memory usage.
+
 If you want to launch the game in 64 bits, just put -64b in arguments: MemoryUsage.exe -64b
+
 If you want to launch the game with opengl or anyother options just put it to arguments: MemoryUsage.exe -force-opengl
 
 #### Why an external exe for this?
@@ -41,6 +43,7 @@ Because for security, Squad has blocked all the process functions used on KSP, w
 #### Troubleshooting?
 
 I have tested only on linux 64b and windows 7 32b, I don't know if that will work on mac (I think it will not work, I need a tester).
+
 If you are on linux you will need to start MemoryUsage with the option that you use to start KSP (ex: LC_ALL=C ...).
 
 #### Changelog
