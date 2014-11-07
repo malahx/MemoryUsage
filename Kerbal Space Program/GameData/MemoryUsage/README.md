@@ -38,7 +38,8 @@ If you want to launch the game with opengl or anyother options just put it in ar
 
 #### Why an external exe for this?
 
-Because for security, Squad has blocked all the process functions used on KSP, with this a modder can't make a malicious mod but to know the amount of memory used by KSP we need to access to these functions.
+For security, Squad has blocked all the process functions used on KSP, with this, a modder can't make a malicious mod. 
+But to know the amount of memory used by KSP we need to access to these functions.
 
 #### Troubleshooting?
 
