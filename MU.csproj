@@ -68,8 +68,11 @@
     <None Include="Kerbal Space Program\GameData\MemoryUsage\MU.version" />
     <None Include="Kerbal Space Program\GameData\MemoryUsage\README.md" />
     <None Include="Kerbal Space Program\GameData\MemoryUsage\Plugins\MemoryUsage.dll" />
+    <None Include="Kerbal Space Program\GameData\MemoryUsage\PluginData\MemoryUsage\MemoryUsage.cfg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Kerbal Space Program\" />
+    <Folder Include="Kerbal Space Program\GameData\MemoryUsage\PluginData\" />
+    <Folder Include="Kerbal Space Program\GameData\MemoryUsage\PluginData\MemoryUsage\" />
   </ItemGroup>
 </Project>

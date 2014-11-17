@@ -24,35 +24,45 @@ namespace MemoryUsage {
 	[KSPAddon(KSPAddon.Startup.MainMenu | KSPAddon.Startup.EditorAny | KSPAddon.Startup.TrackingStation | KSPAddon.Startup.Flight | KSPAddon.Startup.SpaceCentre, false)]
 	public class MemoryUsage : MonoBehaviour {
 
-		public static string VERSION = "1.00";
+		public static string VERSION = "1.10";
 
 		private static bool isdebug = true;
 		private static bool bug = false;
-		private static string file = "GameData/MemoryUsage/PluginData/MemoryUsage/memory.txt";
+		private static string MemoryUsageSavefile = "GameData/MemoryUsage/PluginData/MemoryUsage/memory.txt";
+		private static string MemoryUsageConfigfile = "GameData/MemoryUsage/PluginData/MemoryUsage/MemoryUsage.cfg";
 		private GUIStyle TextStyle = new GUIStyle ();
-		private bool BinaryUnits = true;
-		private static Timer timer = new Timer(10000);
+		private static Timer timer = new Timer(1000);
 
 		[KSPField(isPersistant = true)]
 		public static bool isMemoryUsage = false;
 		[KSPField(isPersistant = true)]
+		public static int CPUusage = 0;
+		[KSPField(isPersistant = true)]
+		public static int Threads = 0;
+		[KSPField(isPersistant = true)]
 		public static Int64 WorkingSet64 = 0;
 		[KSPField(isPersistant = true)]
 		public static Int64 VirtualMemorySize64 = 0;
+		[Persistent]
+		public string Key = "f11";
+		[Persistent]
+		private string BinaryUnits = "true";
 
-		private string MsgToDraw = "Physical MEM: \t{0}\nVirtual MEM: \t{1}";
-		private string MsgError = "MemoryUsage can't work!\nYou need to restart MemoryUsage.";
+		private string MsgToDraw = "CPU Usage: \t\t{0} ({1})" + Environment.NewLine + "Physical MEM: \t{2}" + Environment.NewLine + "Virtual MEM: \t{3}";
+		private string MsgWait = "You need to wait a little!";
+		private string MsgError = "MemoryUsage can't work!" + Environment.NewLine + "You need to restart MemoryUsage.exe";
 
-		private string unit (double value, bool bin) {
+		private bool ValuesAreUsable {
+			get {
+				return (CPUusage != -1 && Threads != -1 && WorkingSet64 != -1 && VirtualMemorySize64 != -1);
+			}
+		}
+
+		private string unit (double value, string bin) {
 			int _i = 1;
-			string[] _units;
 			string[] _units_bin = { "1024", "b", "Kib", "Mib", "Gib", "Tib", "Pib", "Eib", "Zib", "Yib" };
 			string[] _units_dec = { "1000", "b", "kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb" };
-			if (bin) {
-				_units = _units_bin;
-			} else {
-				_units = _units_dec;
-			}
+			string[] _units = (bool.Parse (bin) ? _units_bin : _units_dec);
 			int _val = int.Parse (_units [0]);
 			while (value > _val) {
 				value /= _val;
@@ -72,11 +82,16 @@ namespace MemoryUsage {
 			TextStyle.wordWrap = true;
 			TextStyle.normal.textColor = Color.white;
 			timer.Elapsed += new ElapsedEventHandler(OnTimer);
+			if (System.IO.File.Exists (MemoryUsageConfigfile)) {
+				ConfigNode _temp = ConfigNode.Load (MemoryUsageConfigfile);
+				ConfigNode.LoadObjectFromConfig (this, _temp);
+				myDebug("Load Config file");
+			}
 		}
 		private void Update() {
-			if (Input.GetKeyDown(KeyCode.F11)) {
+			if (Input.GetKeyDown(Key)) {
+				Load ();
 				timer.Enabled = !isMemoryUsage;
-				timer.Start ();
 				isMemoryUsage = !isMemoryUsage;
 			}
 		}
@@ -87,7 +102,11 @@ namespace MemoryUsage {
 			if (isMemoryUsage) {
 				string _string;
 				if (!bug) {
-					_string = string.Format (MsgToDraw, unit(WorkingSet64, BinaryUnits), unit(VirtualMemorySize64, BinaryUnits));
+					if (ValuesAreUsable) {
+						_string = string.Format (MsgToDraw, (CPUusage != 0 ? CPUusage + "%" : "N/A"), Threads, unit (WorkingSet64, BinaryUnits), unit (VirtualMemorySize64, BinaryUnits));
+					} else {
+						_string = MsgWait;
+					}
 				} else {
 					_string = MsgError;
 				}
@@ -97,11 +116,13 @@ namespace MemoryUsage {
 			}
 		}
 		public void Load() {
-			if (System.IO.File.Exists (file)) {
-				ConfigNode _temp = ConfigNode.Load (file);
+			if (System.IO.File.Exists (MemoryUsageSavefile)) {
+				ConfigNode _temp = ConfigNode.Load (MemoryUsageSavefile);
+				CPUusage = int.Parse (_temp.GetValue ("CPUusage"));
+				Threads = int.Parse (_temp.GetValue ("Threads"));
 				WorkingSet64 = Int64.Parse (_temp.GetValue ("WorkingSet64"));
 				VirtualMemorySize64 = Int64.Parse (_temp.GetValue ("VirtualMemorySize64"));
-				if ((DateTime.Now - System.IO.File.GetLastWriteTime (file)).TotalSeconds < 25 || (WorkingSet64 == -1 && VirtualMemorySize64 == -1)) {
+				if ((DateTime.Now - System.IO.File.GetLastWriteTime (MemoryUsageSavefile)).TotalSeconds < 35 || !ValuesAreUsable) {
 					bug = false;
 					myDebug ("Load");
 					return;

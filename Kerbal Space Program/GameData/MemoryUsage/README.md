@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #### What is it?
 
-MemoryUsage is a plugin which add the possibility to see the memory used by KSP.
+MemoryUsage is a plugin which adds the possibility to see the memory usage, the cpu usage and the count of threads used by KSP.
 
 #### How to install it?
 
@@ -30,7 +30,7 @@ Delete the MemoryUsage folder in your KSP/GameData folder and MemoryUsage.exe wh
 
 #### How to use it?
 
-To use this mod, you need to launch MemoryUsage.exe, if the game is not launched, MemoryUsage will launch it. After this, in game, you just need to push on F11 to start seeing the KSP memory usage.
+To use this mod, you need to launch MemoryUsage.exe, if the game is not launched, MemoryUsage.exe will launch it. After this, in game, you just need to push on F11 to start seeing the KSP memory usage.
 
 If you want to launch the game in 64 bits, just put -64b in arguments: MemoryUsage.exe -64b
 
@@ -45,16 +45,20 @@ But to know the amount of memory used by KSP we need to access to these function
 
 I have tested only on linux 64b and windows 7 32b, I don't know if that will work on mac (I think it will not work, I need a tester).
 
-If you are on linux you will need to start MemoryUsage with the option that you use to start KSP (ex: LC_ALL=C ...).
+If you are on linux:
+- you will need to start MemoryUsage.exe with the option that you use to start KSP (ex: LC_ALL=C ...),
+- it seem that you can have the CPUusage (with mono 3.10).
 
 #### Changelog
 
+v1.10 - 2014.11.17
+- New: Added the CPU usage and the threads count,
+- New: Added a configfile to edit the Key to display the cpu/memory usage, you can find it at "Kerbal Space Program/GameData/MemoryUsage/PluginData/MemoryUsage/MemoryUsage.cfg",
+- Fix: Corrected the KSP arguments,
+- Minor fix.
+
 v1.00 - 2014.11.07
 - Initial release.
-
-#### Planned updates/new features
-
-- No new feature planned.
 
 #### Thanks!
 
@@ -64,4 +68,6 @@ and to Squad for this awesome game.
 
 #### Links
 
-https://github.com/malahx/MemoryUsage
+- http://forum.kerbalspaceprogram.com/threads/99494
+- https://kerbalstuff.com/mod/317
+- https://github.com/malahx/MemoryUsage

@@ -29,13 +29,20 @@ using System.IO;
 using System.Threading;
 namespace MemoryUsage {
 	public class Client {
-		public static string VERSION = "1.00";
+		public static string VERSION = "1.10";
 
 		private static bool isdebug = true;
 		public static int is64 = 0;
+		//private static int CPUusage = 0;
+		private static DateTime lastDate = DateTime.Now;
+		private static double lastProcessorTime = 0;
 		private static string directory = "";
 		private static string file = "GameData/MemoryUsage/PluginData/MemoryUsage/memory.txt";
+		private static string[] argsList = { "-64b" };
+		// Don't know why, but on Arch linux 64b, TotalProcessorTime always return 0 with mono 3.10
+		private static string[] LinuxCPUusageCLI = { "ps", "h -C {0} -o pcpu" };
 		private static Process exe;
+		//private static Thread ThGetCPUusage;
 		private static string KSP_Exe {
 			get {
 				return KSP_Exe_Plat[is64];
@@ -62,29 +69,110 @@ namespace MemoryUsage {
 				return _value;
 			}
 		}
-		private static void Save(long WorkingSet64, long VirtualMemorySize64) {
+		private static bool IsKSPLaunched {
+			get {
+				return (Process.GetProcessesByName (KSP_Exe_Plat [0]).Length > 0 || Process.GetProcessesByName (KSP_Exe_Plat [1]).Length > 0);
+			}
+		}
+		private static bool IsLinux {
+			get {
+				return Environment.OSVersion.Platform == PlatformID.Unix;
+			}
+		}
+		private static bool IsWindows {
+			get {
+				return (Environment.OSVersion.Platform != PlatformID.Unix && Environment.OSVersion.Platform == PlatformID.MacOSX);
+			}
+		}
+		private static int GetCPUusage {
+			get {
+				try {
+					DateTime _currentDate = DateTime.Now;
+					double _currentPorcessorTime = exe.TotalProcessorTime.TotalMilliseconds;
+					int _CPUusage = (int)(100 * (_currentPorcessorTime - lastProcessorTime) / (_currentDate - lastDate).TotalMilliseconds / Environment.ProcessorCount);
+					// Don't know why, but on Arch linux 64b, TotalProcessorTime always return 0 with mono 3.10
+					if (IsLinux) {
+						if (_CPUusage == 0) {
+							PerformanceCounter CPUcounter = new PerformanceCounter();
+							CPUcounter.CategoryName = "Process";
+							CPUcounter.CounterName = "% Processor Time";
+							CPUcounter.InstanceName = exe.ProcessName;
+							_CPUusage = (int)CPUcounter.NextValue();
+						}
+						if (_CPUusage == 0) {
+							ProcessStartInfo _startInfo = new ProcessStartInfo ();
+							Process _exe = new Process ();
+							_startInfo.FileName = LinuxCPUusageCLI[0];
+							_startInfo.Arguments = string.Format (LinuxCPUusageCLI [1], exe.ProcessName);
+							_startInfo.RedirectStandardOutput = true;
+							_startInfo.UseShellExecute = false;
+							_startInfo.CreateNoWindow = true;
+							_exe.StartInfo = _startInfo;
+							_exe.Start();
+							string _output = _exe.StandardOutput.ReadToEnd ();
+							if (!_exe.HasExited) {
+								_exe.Kill();
+							}
+							_CPUusage = (int)(double.Parse(_output) / Environment.ProcessorCount);
+							Debug("CPU usage with CLI(" + _startInfo.FileName + " " + _startInfo.Arguments + "): " + _CPUusage + "%");
+						} else {
+							Debug("CPU usage with PerformanceCounter: " + _CPUusage + "%");
+						}
+					}
+					lastProcessorTime = _currentPorcessorTime;
+					lastDate = _currentDate;
+					return _CPUusage;
+				} catch (Exception e) {
+					Debug ("ERROR: " + e.Message);
+				}
+				return 0;
+			}
+		} 
+		// It seem to doesn't work on windows and return 0 on linux with mono 3.10
+		/*private static void GetCPUusage() {
+			try {
+				PerformanceCounter CPUcounter = new PerformanceCounter();
+				CPUcounter.CategoryName = "Process";
+				CPUcounter.CounterName = "% Processor Time";
+				CPUcounter.InstanceName = exe.ProcessName;
+				while (!exe.HasExited) {
+					CPUusage = (int)CPUcounter.NextValue();
+					Thread.Sleep (1000);
+				}
+			}
+			finally {
+				Debug ("Thread ended");
+			}
+		}*/
+		private static void Save(int CPUusage, int Threads, long WorkingSet64, long VirtualMemorySize64) {
 			string[] bench = new string[] {
+				"CPUusage = " + CPUusage,
+				"Threads = " + Threads,
 				"WorkingSet64 = " + WorkingSet64,
 				"VirtualMemorySize64 = " + VirtualMemorySize64,
 			};
-			if (System.IO.Directory.Exists (System.IO.Path.GetDirectoryName(directory + file))) {
+			FileInfo _FileInfo = new FileInfo (directory + file);
+			while (_FileInfo.IsReadOnly) {
+				Debug ("Can't write, wait ..."); 
+			}
+			if (Directory.Exists (Path.GetDirectoryName(directory + file))) {
 				try {
 					File.WriteAllLines (directory + file, bench);
 				} catch {
-					Thread.Sleep (1000);
+					Thread.Sleep (500);
 				}
 			} else {
 				Debug ("Bad installation: " + directory + file);
 			}
 		}
 		private static void Main(string[] args) {
-			if (args.Contains ("-64b")) {
+			if (args.Contains (argsList[0])) {
 				is64 = 1;
 			}
-			if (System.IO.File.Exists (KSP_Exe + KSP_Exe_Plat[2]) && (Process.GetProcessesByName (KSP_Exe_Plat[0]).Length == 0 && Process.GetProcessesByName (KSP_Exe_Plat[1]).Length == 0)) {
+			if (System.IO.File.Exists (KSP_Exe + KSP_Exe_Plat[2]) && !IsKSPLaunched) {
 				Debug ("Executing " + KSP_Exe + KSP_Exe_Plat[2]);
-				exe = Process.Start (KSP_Exe + KSP_Exe_Plat[2], args.ToString());
-				Save (-1, -1);
+				Save (-1, -1, -1, -1);
+				exe = Process.Start (KSP_Exe + KSP_Exe_Plat [2], string.Join (" ", args.Except(argsList)));
 				Thread.Sleep (30000);
 				exe = Process.GetProcessesByName (KSP_Exe) [0];
 			} else {
@@ -100,20 +188,23 @@ namespace MemoryUsage {
 						exe = Process.GetProcessesByName (KSP_Exe_Plat [1]) [0];
 						break;
 					}
-					if ((_now - _idle).TotalSeconds < 60) {
-						Debug ("Idle exit");
+					if ((_now - _idle).TotalSeconds > 60) {
+						Debug ("Idle exit.");
 						Environment.Exit(0);
 					}
 					_now = DateTime.Now;
-					Thread.Sleep (900);
+					Thread.Sleep (1000);
 				}
 			}
 			Debug ("Start process information log.");
+			//ThGetCPUusage = new Thread (new ThreadStart (GetCPUusage));
+			//ThGetCPUusage.Start ();
+			directory = Path.GetDirectoryName (exe.MainModule.FileName) + "/";
+			Thread.Sleep (1000);
 			while (!exe.HasExited) {
-				directory = System.IO.Path.GetDirectoryName (exe.MainModule.FileName) + "/";
 				exe.Refresh ();
-				Save (exe.WorkingSet64, exe.VirtualMemorySize64);
-				Thread.Sleep (9900);
+				Save (GetCPUusage, exe.Threads.Count, exe.WorkingSet64, exe.VirtualMemorySize64);
+				Thread.Sleep (1000);
 			}
 			exe.Close ();
 			Debug ("Exit");
