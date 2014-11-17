@@ -45,9 +45,7 @@ But to know the amount of memory used by KSP we need to access to these function
 
 I have tested only on linux 64b and windows 7 32b, I don't know if that will work on mac (I think it will not work, I need a tester).
 
-If you are on linux:
-- you will need to start MemoryUsage.exe with the option that you use to start KSP (ex: LC_ALL=C ...),
-- it seem that you can have the CPUusage (with mono 3.10).
+If you are on linux, you will need to start MemoryUsage.exe with the option that you use to start KSP (ex: LC_ALL=C ...).
 
 #### Changelog
 
