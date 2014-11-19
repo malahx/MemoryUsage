@@ -29,7 +29,7 @@ using System.IO;
 using System.Threading;
 namespace MemoryUsage {
 	public class Client {
-		public static string VERSION = "1.10";
+		public static string VERSION = "1.11";
 
 		private static bool isdebug = true;
 		public static int is64 = 0;
@@ -113,6 +113,7 @@ namespace MemoryUsage {
 							if (!_exe.HasExited) {
 								_exe.Kill();
 							}
+							_exe.Close();
 							_CPUusage = (int)(double.Parse(_output) / Environment.ProcessorCount);
 							Debug("CPU usage with CLI(" + _startInfo.FileName + " " + _startInfo.Arguments + "): " + _CPUusage + "%");
 						} else {
@@ -151,9 +152,12 @@ namespace MemoryUsage {
 				"WorkingSet64 = " + WorkingSet64,
 				"VirtualMemorySize64 = " + VirtualMemorySize64,
 			};
-			FileInfo _FileInfo = new FileInfo (directory + file);
-			while (_FileInfo.IsReadOnly) {
-				Debug ("Can't write, wait ..."); 
+			if (File.Exists (directory + file)) {
+				FileInfo _FileInfo = new FileInfo (directory + file);
+				while (_FileInfo.IsReadOnly) {
+					Debug ("Can't write, waiting ..."); 
+					Thread.Sleep (1100);
+				}
 			}
 			if (Directory.Exists (Path.GetDirectoryName(directory + file))) {
 				try {
@@ -169,7 +173,7 @@ namespace MemoryUsage {
 			if (args.Contains (argsList[0])) {
 				is64 = 1;
 			}
-			if (System.IO.File.Exists (KSP_Exe + KSP_Exe_Plat[2]) && !IsKSPLaunched) {
+			if (File.Exists (KSP_Exe + KSP_Exe_Plat[2]) && !IsKSPLaunched) {
 				Debug ("Executing " + KSP_Exe + KSP_Exe_Plat[2]);
 				Save (-1, -1, -1, -1);
 				exe = Process.Start (KSP_Exe + KSP_Exe_Plat [2], string.Join (" ", args.Except(argsList)));

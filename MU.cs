@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.IO;
 using System.Timers;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace MemoryUsage {
 	[KSPAddon(KSPAddon.Startup.MainMenu | KSPAddon.Startup.EditorAny | KSPAddon.Startup.TrackingStation | KSPAddon.Startup.Flight | KSPAddon.Startup.SpaceCentre, false)]
 	public class MemoryUsage : MonoBehaviour {
 
-		public static string VERSION = "1.10";
+		public static string VERSION = "1.11";
 
 		private static bool isdebug = true;
 		private static bool bug = false;
@@ -82,7 +83,7 @@ namespace MemoryUsage {
 			TextStyle.wordWrap = true;
 			TextStyle.normal.textColor = Color.white;
 			timer.Elapsed += new ElapsedEventHandler(OnTimer);
-			if (System.IO.File.Exists (MemoryUsageConfigfile)) {
+			if (File.Exists (MemoryUsageConfigfile)) {
 				ConfigNode _temp = ConfigNode.Load (MemoryUsageConfigfile);
 				ConfigNode.LoadObjectFromConfig (this, _temp);
 				myDebug("Load Config file");
@@ -116,13 +117,13 @@ namespace MemoryUsage {
 			}
 		}
 		public void Load() {
-			if (System.IO.File.Exists (MemoryUsageSavefile)) {
+			if (File.Exists (MemoryUsageSavefile)) {
 				ConfigNode _temp = ConfigNode.Load (MemoryUsageSavefile);
 				CPUusage = int.Parse (_temp.GetValue ("CPUusage"));
 				Threads = int.Parse (_temp.GetValue ("Threads"));
 				WorkingSet64 = Int64.Parse (_temp.GetValue ("WorkingSet64"));
 				VirtualMemorySize64 = Int64.Parse (_temp.GetValue ("VirtualMemorySize64"));
-				if ((DateTime.Now - System.IO.File.GetLastWriteTime (MemoryUsageSavefile)).TotalSeconds < 35 || !ValuesAreUsable) {
+				if ((DateTime.Now - File.GetLastWriteTime (MemoryUsageSavefile)).TotalSeconds < 35 || !ValuesAreUsable) {
 					bug = false;
 					myDebug ("Load");
 					return;

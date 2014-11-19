@@ -49,6 +49,10 @@ If you are on linux, you will need to start MemoryUsage.exe with the option that
 
 #### Changelog
 
+v1.11 - 2014.11.19
+- Fix: Corrected the creation of memory.txt file at the startup of MemoryUsage.exe,
+- Fix: Corrected the CPU usage which stop to check on Linux.
+
 v1.10 - 2014.11.17
 - New: Added the CPU usage and the threads count,
 - New: Added a configfile to edit the Key to display the cpu/memory usage, you can find it at "Kerbal Space Program/GameData/MemoryUsage/PluginData/MemoryUsage/MemoryUsage.cfg",
