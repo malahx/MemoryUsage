@@ -1,6 +1,6 @@
 ﻿#### MemoryUsage
-#### A plugin for Kerbal Space Program 0.25.0
-#### Copyright 2014 Malah
+#### A plugin for Kerbal Space Program 0.90
+#### Copyright 2015 Malah
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ Delete the MemoryUsage folder in your KSP/GameData folder and MemoryUsage.exe wh
 #### How to use it?
 
 To use this mod, you need to launch MemoryUsage.exe, if the game is not launched, MemoryUsage.exe will launch it. After this, in game, you just need to push on F11 to start seeing the KSP memory usage.
+You can see the min/avg/max data if you hold F11 5 seconds.
 
 If you want to launch the game in 64 bits, just put -64b in arguments: MemoryUsage.exe -64b
 
@@ -41,6 +42,8 @@ If you want to launch the game with opengl or anyother options just put it in ar
 For security, Squad has blocked all the process functions used on KSP, with this, a modder can't make a malicious mod. 
 But to know the amount of memory used by KSP we need to access to these functions.
 
+If you don't want an external executable, you can try GCMonitor.
+
 #### Troubleshooting?
 
 I have tested only on linux 64b and windows 7 32b, I don't know if that will work on mac (I think it will not work, I need a tester).
@@ -48,6 +51,12 @@ I have tested only on linux 64b and windows 7 32b, I don't know if that will wor
 If you are on linux, you will need to start MemoryUsage.exe with the option that you use to start KSP (ex: LC_ALL=C ...).
 
 #### Changelog
+
+v1.20 - 2015.02.19
+- New: Added a min/avg/max function (with hold f11),
+- New: Added a text color,
+- New: Added an alarm (disabled by default, you can enable it on the file GameData/MemoryUsage/Config.txt, put Alarm to true),
+- Fix: Delete the "Load" spam on the logs.
 
 v1.11 - 2014.11.19
 - Fix: Corrected the creation of memory.txt file at the startup of MemoryUsage.exe,
@@ -64,12 +73,15 @@ v1.00 - 2014.11.07
 
 #### Thanks!
 
-to all mods developers which render this game really huge,
-to my friend Neimad who corrects my bad english ...
-and to Squad for this awesome game.
+* to willy_ineedthatapp_com for his pup_alert sound,
+* to all mods developers which make this game really huge,
+* to my friend Neimad who corrects my bad english ...
+* and to Squad for this awesome game.
 
 #### Links
 
-- http://forum.kerbalspaceprogram.com/threads/99494
-- https://kerbalstuff.com/mod/317
-- https://github.com/malahx/MemoryUsage
+* http://forum.kerbalspaceprogram.com/threads/99494
+* https://kerbalstuff.com/mod/317
+* https://github.com/malahx/MemoryUsage
+* pup_alert sound: http://www.freesound.org/people/willy_ineedthatapp_com/sounds/167337/
+* GCMonitor: http://forum.kerbalspaceprogram.com/threads/92907

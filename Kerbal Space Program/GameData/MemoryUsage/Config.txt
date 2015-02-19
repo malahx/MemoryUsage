@@ -1,0 +1,13 @@
+﻿Key = f11
+BinaryUnits = true
+Refresh = 1
+NoErrorMSG = false
+Color = true
+ColorWarning = #FF0000
+ColorOk = #00FF00
+ColorDefault = #FFFF00
+MinFPS = 30
+MaxMEM = 3500000000
+MaxCPU = 90
+AlarmMEM = false	
+AlarmWithSound = true

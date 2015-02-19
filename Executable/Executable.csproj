@@ -3,12 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AB92C29E-8947-48FD-8199-AA41D4FDA0FF}</ProjectGuid>
+    <ProjectGuid>{4168AF42-EB10-4399-A650-212B993FDDBD}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Client</RootNamespace>
+    <RootNamespace>MemoryUsage</RootNamespace>
     <AssemblyName>MemoryUsage</AssemblyName>
-    <ReleaseVersion>1.00</ReleaseVersion>
-    <StartupObject>MemoryUsage.Client</StartupObject>
+    <ReleaseVersion>1.20</ReleaseVersion>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -22,27 +21,21 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="cp /home/malah/Code/MU/bin/MemoryUsage.exe &quot;/home/malah/Code/MU/Kerbal Space Program/&quot;" />
-        <Command type="AfterBuild" command="cp /home/malah/Code/MU/README.md &quot;/home/malah/Code/MU/Kerbal Space Program/GameData/MemoryUsage/&quot;" />
-        <Command type="AfterBuild" command="cp /home/malah/Code/MU/COPYING &quot;/home/malah/Code/MU/Kerbal Space Program/GameData/MemoryUsage/&quot;" />
-        <Command type="AfterBuild" command="cp -r &quot;/home/malah/Code/MU/Kerbal Space Program/&quot; &quot;/home/malah/.steam/steam/SteamApps/common/&quot;" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="Executable.cs" />
+    <Compile Include="Executable_MU.cs" />
+    <Compile Include="Executable_Usage.cs" />
+    <Compile Include="Executable_LogFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
